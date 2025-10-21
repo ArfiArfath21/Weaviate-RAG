@@ -12,7 +12,7 @@ print(client.is_ready())  # Should print: `True`
 
 vectorizer_config = Configure.Vectorizer.text2vec_ollama(  # Configure the Ollama embedding integration
     api_endpoint="http://host.docker.internal:11434",
-    model=os.getenv("EMBEDDING_MODEL"),  # The model to use
+    model=os.getenv("EMBEDDING_MODEL", "nomic-embed-text"),  # The model to use
 )
 
 # generative_config=Configure.Generative.ollama(              # Configure the Ollama generative integration
@@ -94,16 +94,17 @@ def semantic_query(collection, query: str, limit: int=3, score: bool=False):
     response = collection.query.near_text(
         query=query,
         limit=limit,
-        return_metadata=MetadataQuery(score=score)
+        return_metadata=MetadataQuery(score=score),
+        return_properties=["product_name", "description"]
     )
     return response
 
 # # Example of a hybrid/sematic query
-# query = "256GB phone"
-# response = hybrid_query(collection, query, limit=3)
-# response = semantic_query(collection, query, limit=3)
-# for o in response.objects:
-#     print(o.uuid, o.properties['product_name'])
+query = "256GB phone"
+response = hybrid_query(collection, query, limit=3)
+response = semantic_query(collection, query, limit=3)
+for o in response.objects:
+    print(o.uuid, o.properties)
 
 print("Count: ", get_object_count(collection))
 
