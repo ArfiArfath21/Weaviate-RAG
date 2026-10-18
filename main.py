@@ -4,7 +4,6 @@ import os
 import weaviate
 from weaviate.classes.config import Configure
 from weaviate.classes.query import MetadataQuery
-from weaviate.util import generate_uuid5
 
 
 client = weaviate.connect_to_local()
